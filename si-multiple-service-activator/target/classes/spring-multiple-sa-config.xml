@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-5.2.xsd">
+	
+	<!-- <context:component-scan base-package="com.si.demo"></context:component-scan> -->
+
+	<int:channel id="requestChannel"/>
+	<int:channel id="replyChannel"/>
+	<int:channel id="counterChannel"/>
+	
+	
+	<bean id="ticketReceiver" class="com.si.demo.TicketReceiver"/>
+	<bean id="counter" class="com.si.demo.Counter"/>
+	
+	<int:gateway id="simple.gateway.id" service-interface="com.si.demo.gateway.SimpleGateway" 
+	default-request-channel="requestChannel" default-reply-channel="replyChannel"/>
+	
+	<int:service-activator input-channel="requestChannel"
+						   output-channel="counterChannel"
+						   ref="ticketReceiver"/>
+			
+	<int:service-activator input-channel="counterChannel" output-channel="replyChannel"
+	                       ref="counter"></int:service-activator>
+	
+	
+</beans>
